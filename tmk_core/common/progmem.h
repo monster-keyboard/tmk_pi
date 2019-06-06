@@ -7,6 +7,10 @@
 #   define PROGMEM
 #   define pgm_read_byte(p)     *((unsigned char*)p)
 #   define pgm_read_word(p)     *((uint16_t*)p)
+#else
+#   define PROGMEM
+#   define pgm_read_byte(p)     *((unsigned char*)p)
+#   define pgm_read_word(p)     *((uint16_t*)p)
 #endif
 
 #endif

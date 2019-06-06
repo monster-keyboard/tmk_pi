@@ -55,7 +55,7 @@
 
 
 # Output format. (can be srec, ihex, binary)
-FORMAT = ihex
+FORMAT = binary
 
 
 # Object files directory
@@ -135,7 +135,8 @@ CFLAGS += -Wstrict-prototypes
 #CFLAGS += -Wundef
 #CFLAGS += -Wunreachable-code
 #CFLAGS += -Wsign-compare
-CFLAGS += -Wa,-adhlns=$(@:%.o=%.lst)
+CFLAGS += -W
+CFLAGS += -Wall
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
 ifdef CONFIG_H
@@ -297,12 +298,12 @@ DEBUG_HOST = localhost
 
 # Define programs and commands.
 SHELL = sh
-CC = avr-gcc
-OBJCOPY = avr-objcopy
-OBJDUMP = avr-objdump
-SIZE = avr-size
-AR = avr-ar rcs
-NM = avr-nm
+CC = gcc
+#OBJCOPY = avr-objcopy
+#OBJDUMP = avr-objdump
+#SIZE = avr-size
+#AR = avr-ar rcs
+#NM = avr-nm
 REMOVE = rm -f
 REMOVEDIR = rmdir
 COPY = cp
@@ -347,21 +348,23 @@ GENDEPFLAGS = -MMD -MP -MF .dep/$(subst /,_,$@).d
 # Combine all necessary flags and optional flags.
 # Add target processor to flags.
 # You can give extra flags at 'make' command line like: make EXTRAFLAGS=-DFOO=bar
-ALL_CFLAGS = -mmcu=$(MCU) $(CFLAGS) $(GENDEPFLAGS) $(EXTRAFLAGS)
-ALL_CPPFLAGS = -mmcu=$(MCU) -x c++ $(CPPFLAGS) $(GENDEPFLAGS) $(EXTRAFLAGS)
-ALL_ASFLAGS = -mmcu=$(MCU) -x assembler-with-cpp $(ASFLAGS) $(EXTRAFLAGS)
+ALL_CFLAGS =  $(CFLAGS) $(GENDEPFLAGS) $(EXTRAFLAGS)
+ALL_CPPFLAGS =  -x c++ $(CPPFLAGS) $(GENDEPFLAGS) $(EXTRAFLAGS)
+ALL_ASFLAGS =  -x assembler-with-cpp $(ASFLAGS) $(EXTRAFLAGS)
 
 
 
 
 
 # Default target.
-all: begin gccversion sizebefore build sizeafter end
+all: begin gccversion build end
 
 # Change the build target to build a HEX file or a library.
 #build: elf hex eep lss sym
-build: 
-	@echo $(SRC)
+build: $(OBJ)
+	$(CC) $(OBJ) -o $(TARGET)
+
+
 
 
 elf: $(TARGET).elf
@@ -403,7 +406,7 @@ sizeafter:
 
 # Display compiler version information.
 gccversion : 
-	#@$(CC) --version
+	@$(CC) --version
 
 
 
@@ -593,13 +596,7 @@ clean: begin clean_list end
 
 clean_list :
 	@echo
-	$(REMOVE) $(TARGET).hex
-	$(REMOVE) $(TARGET).eep
-	$(REMOVE) $(TARGET).cof
-	$(REMOVE) $(TARGET).elf
-	$(REMOVE) $(TARGET).map
-	$(REMOVE) $(TARGET).sym
-	$(REMOVE) $(TARGET).lss
+	$(REMOVE) $(TARGET)
 	$(REMOVE) $(OBJ)
 	$(REMOVE) $(LST)
 	$(REMOVE) $(OBJ:.o=.s)
