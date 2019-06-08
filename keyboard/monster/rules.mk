@@ -362,7 +362,7 @@ all: begin gccversion build end
 # Change the build target to build a HEX file or a library.
 #build: elf hex eep lss sym
 build: $(OBJ)
-	$(CC) $(OBJ) -o $(TARGET)
+	$(CC) $(OBJ) -o $(TARGET) -lwiringPi
 
 
 
