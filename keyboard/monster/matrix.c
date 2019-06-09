@@ -22,10 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdbool.h>
 #include "config.h"
 #include "print.h"
-//#include "debug.h"
+#include "debug.h"
 #include "util.h"
 #include "matrix.h"
 #include <stdio.h>
+#include "wait.h"
 #include <wiringPiI2C.h>
 
 
@@ -34,8 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #   define DEBOUNCE	5
 #endif
 
-#define debug printf
-#define debug_hex(m) printf("%x",m)
 static uint8_t debouncing = DEBOUNCE;
 
 /* matrix state(1:on, 0:off) */
@@ -56,9 +55,9 @@ void matrix_setup(){
     i2c_dev_2 = wiringPiI2CSetup(0x21);
 
     if(i2c_dev_1 == -1 || i2c_dev_2 == -1){
-        debug("i2c init failed\n");
-        debug("i2c_dev_1 = %d \n",i2c_dev_1);
-        debug("i2c_dev_2 = %d \n",i2c_dev_2);
+        dprintf("i2c init failed\n");
+        dprintf("i2c_dev_1 = %d \n",i2c_dev_1);
+        dprintf("i2c_dev_2 = %d \n",i2c_dev_2);
         return;
     }
     //设定 row 输出低
@@ -66,28 +65,28 @@ void matrix_setup(){
     
     // row1-8 set output
     if(wiringPiI2CWriteReg8(i2c_dev_1,0x06,0x00) == -1){
-        debug("set pin faild row1-8\n");
+        dprintf("set pin faild row1-8\n");
         return ;
     }
     // row1-8 set output low
     if(wiringPiI2CWriteReg8(i2c_dev_1,0x02,0x00) == -1){
-        debug("set pin faild row1-8 output low\n");
+        dprintf("set pin faild row1-8 output low\n");
         return ;
     }
 
     //col1-8 set input
     if(wiringPiI2CWriteReg8(i2c_dev_1,0x07,0xff) == -1){
-        debug("set pin faild col1-8 \n");
+        dprintf("set pin faild col1-8 \n");
         return ;
     }
     //col9-16 set input
     if(wiringPiI2CWriteReg8(i2c_dev_2,0x06,0xff) == -1){
-        debug("set pin faild col9-16 \n");
+        dprintf("set pin faild col9-16 \n");
         return ;
     }
     //col17-24 set input
     if(wiringPiI2CWriteReg8(i2c_dev_2,0x07,0xff) == -1){
-        debug("set pin faild col17-24 \n");
+        dprintf("set pin faild col17-24 \n");
         return ;
     }
 }
@@ -108,7 +107,7 @@ void matrix_init(void)
 
 uint8_t matrix_scan(void)
 {
-    debug("matrix row %d \n",MATRIX_ROWS);
+    dprintf("matrix row %d \n",MATRIX_ROWS);
     for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
         select_row(i);
         _delay_us(30);  // without this wait read unstable value.
@@ -156,7 +155,7 @@ static matrix_row_t read_cols(void)
     uint8_t col_1 = wiringPiI2CReadReg8(i2c_dev_1,0x01);
     uint8_t col_2 = wiringPiI2CReadReg8(i2c_dev_2,0x00);
     uint8_t col_3 = wiringPiI2CReadReg8(i2c_dev_2,0x01);
-    return (col_3<<16) | (col_2 << 8) | col_1;
+    return (~((col_3<<16) | (col_2 << 8) | col_1)) & 0x00ffffff;
 }
 
 static void unselect_rows(void)

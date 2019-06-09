@@ -23,6 +23,7 @@
  */
 
 #include <stdint.h>
+#include <stdio.h>
 #include "print.h"
 
 
@@ -36,6 +37,14 @@
 void print_set_sendchar(int8_t (*sendchar_func)(uint8_t))
 {
     xdev_out(sendchar_func);
+}
+#elif defined(__PI_ZERO__) /* __AVR__ */
+
+void print_bin24(uint32_t val){
+    int i = 23;
+    for(;i>=0;i--){
+        printf("%d",(val&(1<<i) != 0));
+    }
 }
 
 #elif defined(PROTOCOL_CHIBIOS) /* __AVR__ */

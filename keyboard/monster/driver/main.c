@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "keyboard.h"
 #include <wiringPi.h>
+#include "debug.h"
 
 
 
@@ -27,9 +28,12 @@ host_driver_t pi_driver = {
 
 #define setup_mcu  wiringPiSetup
 
+void task_init();
+
 int main(){
     /*printf("hello world\n");*/
     setup_mcu();
+    task_init();
 
     host_set_driver(&pi_driver);
     printf("\n\nTMK: version 0.1 PI_ZERO started !\n");
@@ -39,6 +43,13 @@ int main(){
         keyboard_task();
     }
     return 0;
+}
+
+void task_init(){
+#ifndef NO_DEBUG
+    debug_config.enable= 1;
+    debug_config.matrix = 1;
+#endif
 }
 
 

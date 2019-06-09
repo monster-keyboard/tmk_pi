@@ -50,12 +50,8 @@ endif
 ifeq (yes,$(strip $(CONSOLE_ENABLE)))
     OPT_DEFS += -DCONSOLE_ENABLE
 else
-    # Remove print functions when console is disabled and
-    # no other print method like UART is available
-    ifneq (yes, $(strip $(DEBUG_PRINT_AVAILABLE)))
 	OPT_DEFS += -DNO_PRINT
 	OPT_DEFS += -DNO_DEBUG
-    endif
 endif
 
 ifeq (yes,$(strip $(COMMAND_ENABLE)))
@@ -97,6 +93,7 @@ ifeq (yes,$(strip $(KEYMAP_SECTION_ENABLE)))
 	EXTRALDFLAGS = $(error no ldscript for keymap section)
     endif
 endif
+
 
 # Version string
 TMK_VERSION := $(shell (git describe --always --dirty=+ || echo 'unknown') 2> /dev/null)

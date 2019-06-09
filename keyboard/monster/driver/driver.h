@@ -5,10 +5,11 @@
 #define _PI_ZERO_DRIVER_H
 #include <stdint.h>
 #include "host.h"
+#include <wiringPi.h>
 
 extern host_driver_t pi_driver;
 
-void _delay_us(uint32_t us); 
-void _delay_ms(uint32_t ms);
+#define _delay_ms delay
+#define _delay_us delayMicroseconds
 
 #endif

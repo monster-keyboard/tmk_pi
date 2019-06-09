@@ -55,6 +55,13 @@ void print_set_sendchar(int8_t (*print_sendchar_func)(uint8_t));
 #define println(s)  printf(s "\r\n")
 #define xprintf  printf
 
+#elif defined(__PI_ZERO__) /* __piz_zero__*/
+
+#include <stdio.h>
+#define print(s)    printf(s)
+#define println(s)  printf(s "\n")
+#define xprintf  printf
+
 #elif defined(__arm__) /* __AVR__ */
 
 #include "mbed/xprintf.h"
@@ -67,6 +74,7 @@ void print_set_sendchar(int8_t (*print_sendchar_func)(uint8_t));
 
 #endif /* __AVR__ */
 
+void print_bin24(uint32_t val);
 
 /* decimal */
 #define print_dec(i)                xprintf("%u", i)
@@ -83,6 +91,7 @@ void print_set_sendchar(int8_t (*print_sendchar_func)(uint8_t));
 #define print_bin32(i)              xprintf("%032lb", i)
 #define print_bin_reverse8(i)       xprintf("%08b", bitrev(i))
 #define print_bin_reverse16(i)      xprintf("%016b", bitrev16(i))
+#define print_bin_reverse24(i)      print_bin24(bitrev32(i))
 #define print_bin_reverse32(i)      xprintf("%032lb", bitrev32(i))
 /* print value utility */
 #define print_val_dec(v)            xprintf(#v ": %u\n", v)

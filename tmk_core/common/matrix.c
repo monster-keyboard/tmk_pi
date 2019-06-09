@@ -16,6 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "print.h"
 #include "matrix.h"
+#include "debug.h"
 
 
 __attribute__ ((weak))
@@ -56,7 +57,11 @@ void matrix_print(void)
 #endif
 
     for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+        printf("%02X: ", row);
+        print_bin_reverse24(matrix_get_row(row));
+        printf("\n");
 
+        /*
 #if (MATRIX_COLS <= 8)
         xprintf("%02X: %08b%s\n", row, bitrev(matrix_get_row(row)),
 #elif (MATRIX_COLS <= 16)
@@ -70,6 +75,7 @@ void matrix_print(void)
         ""
 #endif
         );
+        */
     }
 }
 

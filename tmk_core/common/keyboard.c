@@ -108,8 +108,10 @@ void keyboard_task(void)
 
     matrix_scan();
     for (uint8_t r = 0; r < MATRIX_ROWS; r++) {
+
         matrix_row = matrix_get_row(r);
         matrix_change = matrix_row ^ matrix_prev[r];
+        if (debug_matrix) matrix_print();
         if (matrix_change) {
 #ifdef MATRIX_HAS_GHOST
             if (has_ghost_in_row(r)) {
@@ -125,6 +127,7 @@ void keyboard_task(void)
             }
             matrix_ghost[r] = matrix_row;
 #endif
+            printf("debug_matrix %d",debug_matrix);
             if (debug_matrix) matrix_print();
             matrix_row_t col_mask = 1;
             for (uint8_t c = 0; c < MATRIX_COLS; c++, col_mask <<= 1) {
