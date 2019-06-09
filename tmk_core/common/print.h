@@ -91,7 +91,7 @@ void print_bin24(uint32_t val);
 #define print_bin32(i)              xprintf("%032lb", i)
 #define print_bin_reverse8(i)       xprintf("%08b", bitrev(i))
 #define print_bin_reverse16(i)      xprintf("%016b", bitrev16(i))
-#define print_bin_reverse24(i)      print_bin24(bitrev32(i))
+#define print_bin_reverse24(i)      print_bin24(bitrev32(i)>>8)
 #define print_bin_reverse32(i)      xprintf("%032lb", bitrev32(i))
 /* print value utility */
 #define print_val_dec(v)            xprintf(#v ": %u\n", v)

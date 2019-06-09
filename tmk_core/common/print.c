@@ -41,9 +41,10 @@ void print_set_sendchar(int8_t (*sendchar_func)(uint8_t))
 #elif defined(__PI_ZERO__) /* __AVR__ */
 
 void print_bin24(uint32_t val){
+    //printf("print_bin24 :%x\n",val);
     int i = 23;
     for(;i>=0;i--){
-        printf("%d",(val&(1<<i) != 0));
+        printf("%d",((val&(1<<i)) != 0));
     }
 }
 
