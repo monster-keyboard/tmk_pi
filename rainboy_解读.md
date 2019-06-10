@@ -46,12 +46,36 @@ while(1){
 process_action(&record);代码
 ```c
 action_t action = layer_switch_get_action(event);
+switch
+    |
+    v
     register_code(action.key.code);
-            add_key(code);
-                add_key_byte(key); ??
+            add_key(code);      //action_util.c
+                add_key_byte(key); ??// 6KRO_EAN
                     keyboard_report->keys[i] ??
             send_keyboard_report(); action_util.c
                 host_keyboard_send(keyboard_report); host.c
                     (*driver->send_keyboard)(report);
 
 ```
+```
+action_t action = layer_switch_get_action(event);
+||
+||
+VV
+
+action_t layer_switch_get_action(event)   action.c
+    action_for_key(layer,event.key) //event.key  row col keymap.c
+        uint8_t keycode = keymap_key_to_keycode(layer, key);
+        keycode_to_action(keycode);
+            keycode_to_action 得到一个十六位的键值
+
+```
+action_t 是一种枚举啊类型,定义在action_code.h文件里,
+
+layer = current_layer_for_key(event.key);
+
+
+一个重要的函数
+/* translates keycode to action */
+static action_t keycode_to_action(uint8_t keycode)

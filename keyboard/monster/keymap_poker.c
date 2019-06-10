@@ -1,6 +1,6 @@
 #include "keymap_common.h"
 
-const uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+const uint8_t keymaps[32][MATRIX_ROWS][MATRIX_COLS] = {
     /* 0: qwerty */
     KEYMAP_ANSI(
         GRV, 1,   2,   3,   4,   5,   6,   7,   8,   9,   0,   MINS,EQL, BSPC, \

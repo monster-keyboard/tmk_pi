@@ -49,6 +49,7 @@ void task_init(){
 #ifndef NO_DEBUG
     debug_config.enable= 1;
     debug_config.matrix = 1;
+    debug_config.keyboard = 1;
 #endif
 }
 

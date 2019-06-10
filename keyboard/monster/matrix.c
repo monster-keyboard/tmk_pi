@@ -114,12 +114,16 @@ uint8_t matrix_scan(void)
         select_row(i);
         _delay_us(30);  // without this wait read unstable value.
         matrix_row_t cols = read_cols();
-        uint8_t row_now = read_rows();
-        dprintf("row: %d %x, cols:",i,row_now);
-        //dprintf("col: %x\n",cols);
-        print_bin_reverse24(cols);
-        printf("\n");
-        _delay_ms(1000);  // without this wait read unstable value.
+        /*
+         *
+         * uint8_t row_now = read_rows();
+         * dprintf("row: %d %x, cols:",i,row_now);
+         *  //dprintf("col: %x\n",cols);
+         * print_bin_reverse24(cols);
+         * printf("\n");
+         * _delay_ms(1000);  
+         * 
+         */
         if (matrix_debouncing[i] != cols) {
             matrix_debouncing[i] = cols;
             if (debouncing) { debug("bounce!: "); debug_hex(debouncing); debug("\n");
@@ -128,6 +132,8 @@ uint8_t matrix_scan(void)
         }
         unselect_rows();
     }
+
+    //printf("debouncing %d\n",debouncing);
 
     if (debouncing) {
         if (--debouncing) {
@@ -163,12 +169,14 @@ static uint32_t read_cols(void)
     uint8_t col_1 = wiringPiI2CReadReg8(i2c_dev_1,0x01);
     uint8_t col_2 = wiringPiI2CReadReg8(i2c_dev_2,0x00);
     uint8_t col_3 = wiringPiI2CReadReg8(i2c_dev_2,0x01);
-    dprintf("col_1: %x\n",col_1);
-    dprintf("col_2: %x\n",col_2);
-    dprintf("col_3: %x\n",col_3);
-    uint32_t ans =  (~((col_3<<16) | (col_2 << 8) | col_1)) & 0x00ffffff;
-    dprintf("ans: %x\n",ans);
-    return ans;
+    /*
+     *dprintf("col_1: %x\n",col_1);
+     *dprintf("col_2: %x\n",col_2);
+     *dprintf("col_3: %x\n",col_3);
+     *uint32_t ans =  (~((col_3<<16) | (col_2 << 8) | col_1)) & 0x00ffffff;
+     *dprintf("ans: %x\n",ans);
+     */
+    return  (~((col_3<<16) | (col_2 << 8) | col_1)) & 0x00ffffff;
 }
 static uint8_t read_rows(void){
     uint8_t row  =   wiringPiI2CReadReg8(i2c_dev_1,0x02);

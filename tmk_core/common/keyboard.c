@@ -16,6 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <stdint.h>
 #include "keyboard.h"
+#include "wait.h"
 #include "matrix.h"
 #include "keymap.h"
 #include "host.h"
@@ -107,11 +108,15 @@ void keyboard_task(void)
     matrix_row_t matrix_change = 0;
 
     matrix_scan();
+
+    //if (debug_matrix) {
+    //    matrix_print();
+    //    _delay_ms(1500);  // without this wait read unstable value.
+    //}
     for (uint8_t r = 0; r < MATRIX_ROWS; r++) {
 
         matrix_row = matrix_get_row(r);
         matrix_change = matrix_row ^ matrix_prev[r];
-        if (debug_matrix) matrix_print();
         if (matrix_change) {
 #ifdef MATRIX_HAS_GHOST
             if (has_ghost_in_row(r)) {
@@ -127,8 +132,14 @@ void keyboard_task(void)
             }
             matrix_ghost[r] = matrix_row;
 #endif
-            printf("debug_matrix %d",debug_matrix);
-            if (debug_matrix) matrix_print();
+            /*printf("debug_matrix %d",debug_matrix);*/
+            /*if (debug_matrix) matrix_print();*/
+
+            if (debug_matrix) {
+                dprintf("now row at: %d\n",r);
+                matrix_print();
+                _delay_ms(1500);  
+            }
             matrix_row_t col_mask = 1;
             for (uint8_t c = 0; c < MATRIX_COLS; c++, col_mask <<= 1) {
                 if (matrix_change & col_mask) {

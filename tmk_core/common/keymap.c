@@ -39,6 +39,11 @@ __attribute__ ((weak))
 action_t action_for_key(uint8_t layer, keypos_t key)
 {
     uint8_t keycode = keymap_key_to_keycode(layer, key);
+
+    dprintf("keycode %x \n",keycode);
+    dprintf("layer %d\n",layer);
+    /*_delay_ms(1000);*/
+
     switch (keycode) {
         case KC_FN0 ... KC_FN31:
             return keymap_fn_to_action(keycode);

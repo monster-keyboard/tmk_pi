@@ -59,7 +59,7 @@ void print_set_sendchar(int8_t (*print_sendchar_func)(uint8_t));
 
 #include <stdio.h>
 #define print(s)    printf(s)
-#define println(s)  printf(s "\n")
+#define println(s)  printf(s "\r\n")
 #define xprintf  printf
 
 #elif defined(__arm__) /* __AVR__ */

@@ -28,21 +28,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "action.h"
 #include "hook.h"
 #include "wait.h"
-
-#ifdef DEBUG_ACTION
 #include "debug.h"
-#else
-#include "nodebug.h"
-#endif
+
 
 
 void action_exec(keyevent_t event)
 {
+
+    dprint("action_exec \n\n");
+
+
     if (!IS_NOEVENT(event)) {
         dprint("\n---- action_exec: start -----\n");
         dprint("EVENT: "); debug_event(event); dprintln();
         hook_matrix_change(event);
     }
+    _delay_ms(1500);
 
     keyrecord_t record = { .event = event };
 
