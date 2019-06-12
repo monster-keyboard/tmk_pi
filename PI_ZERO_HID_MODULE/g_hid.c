@@ -19,8 +19,9 @@
 #include <linux/usb/composite.h>
 #include <linux/usb/g_hid.h>
 
-#define DRIVER_DESC        "HID Gadget"
-#define DRIVER_VERSION        "2010/03/16"
+#define DRIVER_DESC        "Monster Keyboard"
+#define DRIVER_VERSION        "2019/06/16"
+#define REPORT_BYTES 16
 
 #include "u_hid.h"
 
@@ -40,8 +41,7 @@ struct hidg_func_node {
 
 static LIST_HEAD(hidg_func_list);
 
-/* hid descriptor for a keyboard */
-static struct hidg_func_descriptor my_hid_data = {
+static struct hidg_func_descriptor keyboard_hid_data_6k = {
     .subclass        = 0, /* No subclass */
     .protocol        = 1, /* Keyboard */
     .report_length        = 8,
@@ -82,19 +82,70 @@ static struct hidg_func_descriptor my_hid_data = {
     }
 };
 
-static struct platform_device my_hid = {
+
+/* hid descriptor for a keyboard */
+static struct hidg_func_descriptor keyboard_hid_data_nkro = {
+    .subclass        = 0, /* No subclass */
+    .protocol        = 1, /* Keyboard */
+    .report_length        = 16,
+    .report_desc_length    = (32-3)*2-1,
+    .report_desc        = {  //把这里修改了
+        0x05, 0x01,                     // Usage Page (Generic Desktop),
+        0x09, 0x06,                     // Usage (Keyboard),
+        0xA1, 0x01,                     // Collection (Application),
+        // bitmap of modifiers
+        0x75, 0x01,                     //   Report Size (1),
+        0x95, 0x08,                     //   Report Count (8),
+        0x05, 0x07,                     //   Usage Page (Key Codes),
+        0x19, 0xE0,                     //   Usage Minimum (224),
+        0x29, 0xE7,                     //   Usage Maximum (231),
+        0x15, 0x00,                     //   Logical Minimum (0),
+        0x25, 0x01,                     //   Logical Maximum (1),
+        0x81, 0x02,                     //   Input (Data, Variable, Absolute), ;Modifier byte
+        // LED output report
+        0x95, 0x05,                     //   Report Count (5),
+        0x75, 0x01,                     //   Report Size (1),
+        0x05, 0x08,                     //   Usage Page (LEDs),
+        0x19, 0x01,                     //   Usage Minimum (1),
+        0x29, 0x05,                     //   Usage Maximum (5),
+        0x91, 0x02,                     //   Output (Data, Variable, Absolute),
+        0x95, 0x01,                     //   Report Count (1),
+        0x75, 0x03,                     //   Report Size (3),
+        0x91, 0x03,                     //   Output (Constant),
+        // bitmap of keys
+        0x95, (REPORT_BYTES-1)*8,	//   Report Count (),
+        0x75, 0x01,                     //   Report Size (1),
+        0x15, 0x00,                     //   Logical Minimum (0),
+        0x25, 0x01,                     //   Logical Maximum(1),
+        0x05, 0x07,                     //   Usage Page (Key Codes),
+        0x19, 0x00,                     //   Usage Minimum (0),
+        0x29, (REPORT_BYTES-1)*8-1,	//   Usage Maximum (),
+        0x81, 0x02,                     //   Input (Data, Variable, Absolute),
+        0xc0                            // End Collection
+    }
+};
+
+static struct platform_device keyboard_hid_6k = {
     .name            = "hidg",
     .id            = 0,
     .num_resources        = 0,
     .resource        = 0,
-    .dev.platform_data    = &my_hid_data,
+    .dev.platform_data    = &keyboard_hid_data_6k,
+};
+
+static struct platform_device keyboard_hid_nkro = {
+    .name            = "hidg",
+    .id            = 1,
+    .num_resources        = 0,
+    .resource        = 0,
+    .dev.platform_data    = &keyboard_hid_data_nkro,
 };
 
 
 
 
 /* hid descriptor for a mouse */
-static struct hidg_func_descriptor pcduino_mouse_data = {
+static struct hidg_func_descriptor mouse_data = {
     .subclass = 0, //No SubClass
     .protocol = 2, //Mouse
     .report_length = 4,
@@ -130,21 +181,14 @@ static struct hidg_func_descriptor pcduino_mouse_data = {
     }
 };
 
-static struct platform_device pcduino_hid_mouse = {
- .name = "hidg",
- .id = 1,
- .num_resources = 0,
- .resource = 0,
- .dev.platform_data = &pcduino_mouse_data,
-};
-
-static struct platform_device pcduino_hid_mouse2 = {
+static struct platform_device hid_mouse = {
  .name = "hidg",
  .id = 2,
  .num_resources = 0,
  .resource = 0,
- .dev.platform_data = &pcduino_mouse_data,
+ .dev.platform_data = &mouse_data,
 };
+
 
 
 
@@ -388,27 +432,30 @@ static int __init hidg_init(void)
 {
     int status;
 
-
-    status = platform_device_register(&my_hid);
+#ifndef USE_NKRO
+    status = platform_device_register(&keyboard_hid_6k);
     if (status < 0) {
         printk("hid keybord reg failed\n");
-        platform_device_unregister(&my_hid);
+        platform_device_unregister(&keyboard_hid_6k);
         return status;
     }
+#else
+    status = platform_device_register(&keyboard_hid_nkro);
+    if (status < 0) {
+        printk("hid keybord reg failed\n");
+        platform_device_unregister(&keyboard_hid_nkro);
+        return status;
+    }
+#endif
 
-    status = platform_device_register(&pcduino_hid_mouse);
+#ifdef USE_MOUSE
+    status = platform_device_register(&hid_mouse);
     if (status < 0) {
         printk("hid mouse reg failed\n");
-        platform_device_unregister(&pcduino_hid_mouse);
+        platform_device_unregister(&hid_mouse);
         return status;
     }
-
-    status = platform_device_register(&pcduino_hid_mouse2);
-    if (status < 0) {
-        printk("hid mouse reg failed\n");
-        platform_device_unregister(&pcduino_hid_mouse2);
-        return status;
-    }
+#endif
 
     status = platform_driver_probe(&hidg_plat_driver,
                 hidg_plat_driver_probe);
@@ -426,11 +473,17 @@ module_init(hidg_init);
 static void __exit hidg_cleanup(void)
 {
 
-    platform_device_unregister(&my_hid);
+#ifndef USE_NKRO
+    platform_device_unregister(&keyboard_hid_6k);
+#else
+    platform_device_unregister(&keyboard_hid_nkro);
+#endif
     platform_driver_unregister(&hidg_plat_driver);
-    platform_device_unregister(&pcduino_hid_mouse);
-    platform_device_unregister(&pcduino_hid_mouse2);
+#ifdef USE_MOUSE
+    platform_device_unregister(&hid_mouse);
+#endif
     usb_composite_unregister(&hidg_driver);
 }
 module_exit(hidg_cleanup);
+
 
