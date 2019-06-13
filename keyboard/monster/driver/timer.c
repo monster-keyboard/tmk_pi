@@ -16,7 +16,6 @@ void timer_clear(void){
 
 uint16_t timer_read(void)
 {
-    printf("timer_read at pi driver\n");
     return  (uint16_t)millis();
 }
 

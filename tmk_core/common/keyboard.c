@@ -146,7 +146,7 @@ void keyboard_task(void)
                     keyevent_t e = (keyevent_t){
                         .key = (keypos_t){ .row = r, .col = c },
                         .pressed = (matrix_row & col_mask),
-                        .time = (timer_read() | 1) /* time should not be 0 */
+                        .time = (timer_read32() | 1) /* time should not be 0 */
                     };
                     action_exec(e);
                     hook_matrix_change(e);

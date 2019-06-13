@@ -36,7 +36,7 @@ typedef struct {
 typedef struct {
     keypos_t key;
     bool     pressed;
-    uint16_t time;
+    uint32_t time;
 } keyevent_t;
 
 /* equivalent test of keypos_t */
