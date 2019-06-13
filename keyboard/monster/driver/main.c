@@ -1,16 +1,25 @@
 #include <stdint.h>
+#include <stdio.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <wiringPi.h>
+
+#include "keyboard.h"
+#include "debug.h"
 #include "host.h"
 #include "host_driver.h"
 #include "matrix.h"
-#include <stdio.h>
-#include "keyboard.h"
-#include <wiringPi.h>
-#include "debug.h"
 
 
 
+
+int fd;
 static uint8_t  keyboard_led_stats = 0;
 static report_keyboard_t keyboard_report;
+
+char hidg_path[] = "/dev/hidg0";
 
 
 /* host driver */ static uint8_t keyboard_leds(void);
@@ -30,7 +39,13 @@ host_driver_t pi_driver = {
 
 void task_init();
 
+
 int main(){
+
+    if ((fd = open(hidg_path, O_RDWR, 0666)) == -1) {
+        perror(hidg_path);
+        return 3;
+    }
     /*printf("hello world\n");*/
     setup_mcu();
     task_init();
@@ -63,11 +78,19 @@ static uint8_t keyboard_leds(void)
 {
     return keyboard_led_stats;
 }
-
+//https://www.kernel.org/doc/Documentation/usb/gadget_hid.txt
 static void send_keyboard(report_keyboard_t *report)
 {
+
+/*#ifdef NKRO_ENABLE*/
+/*#endif*/
     uint8_t timeout = 128;
     keyboard_report= *report;
+    int to_send = sizeof(report_keyboard_t);
+    if (write(fd, report, to_send) != to_send) {
+        perror(hidg_path);
+        return;
+    }
 }
 
 static void send_mouse(report_mouse_t *report)
