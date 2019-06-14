@@ -97,6 +97,8 @@ void keyboard_init(void)
  * Do keyboard routine jobs: scan matrix, light LEDs, ...
  * This is repeatedly called as fast as possible.
  */
+uint32_t _t =0;
+uint32_t _tt;
 void keyboard_task(void)
 {
     static matrix_row_t matrix_prev[MATRIX_ROWS];
@@ -107,7 +109,13 @@ void keyboard_task(void)
     matrix_row_t matrix_row = 0;
     matrix_row_t matrix_change = 0;
 
+
+
+
+    /*_t  = timer_read32();*/
     matrix_scan();
+    /*_tt  = timer_read32();*/
+    /*dprintf("scan_end: %d\n",_tt-_t);*/
 
     //if (debug_matrix) {
     //    matrix_print();
@@ -138,7 +146,7 @@ void keyboard_task(void)
             if (debug_matrix) {
                 dprintf("now row at: %d\n",r);
                 matrix_print();
-                _delay_ms(1500);  
+                /*_delay_ms(1500);  */
             }
             matrix_row_t col_mask = 1;
             for (uint8_t c = 0; c < MATRIX_COLS; c++, col_mask <<= 1) {
@@ -161,7 +169,13 @@ void keyboard_task(void)
         }
     }
     // call with pseudo tick event when no real key event.
+    //
+    //
+
+    /*_t  = timer_read32();*/
     action_exec(TICK);
+    /*_tt  = timer_read32();*/
+    /*dprintf("action_exec_end: %d\n",_tt-_t);*/
 
 //MATRIX_LOOP_END:
 

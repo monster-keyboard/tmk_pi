@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 void action_exec(keyevent_t event)
 {
 
-    dprint("action_exec \n\n");
+    /*dprint("action_exec \n\n");*/
 
 
     if (!IS_NOEVENT(event)) {
@@ -43,7 +43,7 @@ void action_exec(keyevent_t event)
         dprint("EVENT: "); debug_event(event); dprintln();
         hook_matrix_change(event);
     }
-    _delay_ms(1500);
+    /*_delay_ms(1500);*/
 
     keyrecord_t record = { .event = event };
 
@@ -538,6 +538,7 @@ void clear_keyboard_but_mods(void)
 #endif
 }
 
+/* 是不是 tap_key */
 bool is_tap_key(keyevent_t event)
 {
     if (IS_NOEVENT(event)) { return false; }

@@ -27,8 +27,7 @@ VPATH:全局访问路径VAPTH:即在执行make命令时可以从该路径中查�
 入口main ./tmk_core/protocol/lufa/lufa.c
 
 
-```c
-    keyboard_setup(); -> matrix_setup()->空;
+```c keyboard_setup(); -> matrix_setup()->空;
     sleep_led_init();
     keyboard_init();
         timer_init(); 时间相关

@@ -57,7 +57,7 @@ SRC =	matrix.c \
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
 else
-    SRC := keymap_poker.c $(SRC)
+    SRC := keymap_defalut.c $(SRC)
 endif
 
 CONFIG_H = config.h

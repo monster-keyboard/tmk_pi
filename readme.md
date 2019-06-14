@@ -19,3 +19,9 @@ sudo raspi-config
 ```plaintext
 5.Interfacing Options ----> p5 I2C
 ```
+
+- [ ] 外置usb 接口
+    - type-c 6p
+    - mini usb 母座
+- [ ] TFT(spi) 屏幕
+- [ ] g_mass_storage 模拟U盘

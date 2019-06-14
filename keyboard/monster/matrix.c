@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <stdint.h>
 #include <stdbool.h>
+#include "timer.h"
 #include "config.h"
 #include "print.h"
 #include "debug.h"
@@ -109,10 +110,14 @@ void matrix_init(void)
 
 uint8_t matrix_scan(void)
 {
+
+    /*uint32_t _t2 = timer_read32();*/
+    /*printf("time %d\n",_t2 - _tt);*/
+    /*_tt = _t2;*/
     /*dprintf("matrix row %d \n",MATRIX_ROWS);*/
     for (uint8_t i = 0; i < MATRIX_ROWS; i++) {
         select_row(i);
-        _delay_us(30);  // without this wait read unstable value.
+        /*_delay_us(30);  // without this wait read unstable value.*/
         matrix_row_t cols = read_cols();
         /*
          *

@@ -3,7 +3,6 @@
 #include<sys/types.h>
 #include<sys/stat.h>
 #include <fcntl.h>
-#include <unistd.h>
 #include <wiringPi.h>
 
 #include "keyboard.h"
@@ -11,9 +10,14 @@
 #include "host.h"
 #include "host_driver.h"
 #include "matrix.h"
+#include "config.h"
+#include "led.h"
+
+//https://my.oschina.net/floristgao/blog/311612
+#include <unistd.h>
 
 
-
+fd_set rfds;
 
 int fd;
 static uint8_t  keyboard_led_stats = 0;
@@ -22,7 +26,8 @@ static report_keyboard_t keyboard_report;
 char hidg_path[] = "/dev/hidg0";
 
 
-/* host driver */ static uint8_t keyboard_leds(void);
+/* host driver */ 
+static uint8_t keyboard_leds(void);
 static void send_keyboard(report_keyboard_t *report);
 static void send_mouse(report_mouse_t *report);
 static void send_system(uint16_t data);
@@ -49,6 +54,9 @@ int main(){
     /*printf("hello world\n");*/
     setup_mcu();
     task_init();
+    led_init();
+
+    FD_SET(fd, &rfds);
 
     host_set_driver(&pi_driver);
     printf("\n\nTMK: version 0.1 PI_ZERO started !\n");
@@ -56,6 +64,13 @@ int main(){
     keyboard_init();
     while(1){
         keyboard_task();
+        if (FD_ISSET(fd, &rfds)) {
+            char buf[8];
+            int led_status_len = read(fd,buf,7);
+            if( led_status_len){
+                keyboard_led_stats = buf[led_status_len-1];
+            }
+        }
     }
     return 0;
 }
