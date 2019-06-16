@@ -44,6 +44,9 @@ TARGET = monster_pi
 # Directory common source filess exist
 TMK_DIR = ../../tmk_core
 
+# Directory lib source filess exist
+LIB_DIR = ../../lib
+
 # Directory keyboard dependent files exist
 TARGET_DIR = .
 
@@ -52,7 +55,9 @@ SRC =	matrix.c \
 	led.c \
 	driver/driver.c \
 	driver/timer.c \
-	driver/main.c
+	driver/main.c \
+	cJSON.c \
+	read_keymap.c
 
 ifdef KEYMAP
     SRC := keymap_$(KEYMAP).c $(SRC)
@@ -135,6 +140,7 @@ NKRO_ENABLE = no # USB Nkey Rollover
 VPATH += $(TARGET_DIR)
 VPATH += $(TARGET_DIR)/driver
 VPATH += $(TMK_DIR)
+VPATH += $(LIB_DIR)
 
 #include $(TMK_DIR)/protocol/lufa.mk
 include $(TARGET_DIR)/common.mk

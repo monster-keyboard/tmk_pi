@@ -25,3 +25,22 @@ sudo raspi-config
     - mini usb 母座
 - [ ] TFT(spi) 屏幕
 - [ ] g_mass_storage 模拟U盘
+
+### 键位文件格式
+
+使用`json`格式
+
+读取顺序
+
+- `monster_keymap.json`
+- `keymap.json`
+
+```json
+{
+    "author":"rainboy",
+    "keymap":"",
+    "layout":"",
+    "col_row_mapping":"|",
+    "time":""
+}
+```

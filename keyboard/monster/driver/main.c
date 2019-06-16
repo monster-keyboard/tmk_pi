@@ -13,11 +13,14 @@
 #include "matrix.h"
 #include "config.h"
 #include "led.h"
+#include "read_keymap.h"
+#include "keymap_common.h"
 
 //https://my.oschina.net/floristgao/blog/311612
 #include <unistd.h>
 
 
+extern uint8_t keymaps[][MATRIX_ROWS][MATRIX_COLS];
 fd_set rfds;
 struct timeval wait_for_wirite;
 struct timeval wait_for_read;
@@ -25,6 +28,14 @@ struct timeval wait_for_read;
 int fd;
 static uint8_t  keyboard_led_stats = 0;
 static report_keyboard_t keyboard_report;
+
+/* keymap.json 文件路径 */
+
+char keymap_json_paths[][255]  = {
+    "/boot/monster_keymap.json",
+    "/boot/keymap.json"
+};
+
 
 char hidg_path[] = "/dev/hidg0";
 
@@ -63,6 +74,7 @@ int main(){
 
     host_set_driver(&pi_driver);
     printf("\n\nTMK: version 0.1 PI_ZERO started !\n");
+    read_keymap_init(keymap_json_paths,keymaps);
     keyboard_setup();
     keyboard_init();
     while(1){
@@ -73,6 +85,9 @@ int main(){
 }
 
 void task_init(){
+    /* 读取keymap 文件 */
+
+
     wait_for_wirite.tv_sec = 0;
     wait_for_wirite.tv_usec= 100;
     wait_for_read.tv_sec = 0;

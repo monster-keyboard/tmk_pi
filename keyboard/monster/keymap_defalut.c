@@ -2,7 +2,7 @@
 
 #define ___ NO
 #define KC____ KC_NO
-const uint8_t keymaps[32][MATRIX_ROWS][MATRIX_COLS] = {
+uint8_t keymaps[32][MATRIX_ROWS][MATRIX_COLS] = {
 {//layer 0
        /*___1,___2,___3,___4,___5,___6,___7,___8,___9,__10,__11,__12,__13,__14,__15,__16,__17,__18,__19,__20,__21,__22,__23,__24*/
 /*1*/ KR( ESC, ___,  F1,  F2,  F3,  F4,  F5,  F6,  F7,  F8,  F9, F10, F11, F12,PSCR,SLCK,PAUS, ___, ___, ___, ___, ___, ___, ___),
