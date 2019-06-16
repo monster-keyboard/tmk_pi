@@ -26,7 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "debug.h"
 #include "util.h"
 #include "matrix.h"
-#include <stdio.h>
 #include "wait.h"
 #include <wiringPiI2C.h>
 

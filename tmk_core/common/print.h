@@ -124,6 +124,7 @@ void print_bin24(uint32_t val);
 #define print_bin32(data)           ((void)0)
 #define print_bin_reverse8(data)    ((void)0)
 #define print_bin_reverse16(data)   ((void)0)
+#define print_bin_reverse24(data)   ((void)0)
 #define print_bin_reverse32(data)   ((void)0)
 #define print_val_dec(v)            ((void)0)
 #define print_val_decs(v)           ((void)0)
